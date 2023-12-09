@@ -1,4 +1,6 @@
 pub mod app;
+pub mod models;
+pub mod ui;
 use cfg_if::cfg_if;
 
 cfg_if! {
