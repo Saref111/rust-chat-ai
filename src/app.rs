@@ -4,7 +4,11 @@ use core::future;
 use leptos::*;
 use leptos_meta::*;
 // use leptos_router::*;
-use crate::{ui::{chat_board::*, chat_controls::*}, models::conversation::{Conversation, Message}};
+use crate::{
+    ui::{chat_board::*, chat_controls::*}, 
+    models::conversation::{Conversation, Message}, 
+    api::converse
+};
 
 
 #[component]
@@ -24,8 +28,29 @@ pub fn App() -> impl IntoView {
                 is_user: true,
             });
         });
-        future::ready(())
+        converse(conversation.get())
     });
+
+    create_effect(move |_| {
+        if let Some(_) = send.input().get() {
+            let typing_message = Message {
+                text: "typing...".to_owned(),
+                is_user: false,
+            };
+            set_conversation.update(|mut conversation| {
+                conversation.messages.push(typing_message);
+            });
+        }
+    });
+
+    create_action(move |_| {
+        if Some(Ok(response)) = send.input().get() {
+            set_conversation.update(move |&mut c| {
+                c.messages.last_mut().unwrap().text = response;
+            })
+        }
+    });
+
     view! {
         // injects a stylesheet into the document <head>
         // id=leptos means cargo-leptos will hot-reload this stylesheet
