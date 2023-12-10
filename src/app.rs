@@ -1,7 +1,10 @@
+// use std::future::Future;
+use core::future;
+
 use leptos::*;
 use leptos_meta::*;
-use leptos_router::*;
-use crate::ui::{chat_board::*, chat_controls::*};
+// use leptos_router::*;
+use crate::{ui::{chat_board::*, chat_controls::*}, models::conversation::{Conversation, Message}};
 
 
 #[component]
@@ -9,6 +12,20 @@ pub fn App() -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
 
+    let (
+        conversation,
+        set_conversation
+    ) = create_signal(Conversation::new());
+
+    let send = create_action(move |text: &String| {
+        set_conversation.update(|mut conversation| {
+            conversation.messages.push(Message {
+                text: text.to_owned(),
+                is_user: true,
+            });
+        });
+        future::ready(())
+    });
     view! {
         // injects a stylesheet into the document <head>
         // id=leptos means cargo-leptos will hot-reload this stylesheet
@@ -16,8 +33,8 @@ pub fn App() -> impl IntoView {
 
         // sets the document title
         <Title text="CHAT AI"/>
-        <ChatBoard/>
-        <ChatControls/>
+        <ChatBoard conversation/>
+        <ChatControls send/>
         
         // content for this welcome page
         // <Router>
