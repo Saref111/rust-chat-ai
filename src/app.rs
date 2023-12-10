@@ -22,7 +22,7 @@ pub fn App() -> impl IntoView {
     ) = create_signal(Conversation::new());
 
     let send = create_action(move |text: &String| {
-        set_conversation.update(|mut conversation| {
+        set_conversation.update(|&mut conversation| {
             conversation.messages.push(Message {
                 text: text.to_owned(),
                 is_user: true,
@@ -37,7 +37,7 @@ pub fn App() -> impl IntoView {
                 text: "typing...".to_owned(),
                 is_user: false,
             };
-            set_conversation.update(|mut conversation| {
+            set_conversation.update(|&mut conversation| {
                 conversation.messages.push(typing_message);
             });
         }
