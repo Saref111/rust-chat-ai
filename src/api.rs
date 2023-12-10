@@ -1,6 +1,6 @@
 use leptos::{ServerFnError, server};
 use cfg_if::cfg_if;
-use crate::models::conversation::{Conversation, Message};
+use crate::models::conversation::Conversation;
 
 #[server(Converse, "/api")]
 pub async fn converse(prompt: Conversation) -> Result<String, ServerFnError> {

@@ -1,5 +1,3 @@
-// use std::future::Future;
-use core::future;
 
 use leptos::*;
 use leptos_meta::*;
@@ -22,7 +20,7 @@ pub fn App() -> impl IntoView {
     ) = create_signal(Conversation::new());
 
     let send = create_action(move |text: &String| {
-        set_conversation.update(|&mut conversation| {
+        set_conversation.update(|conversation| {
             conversation.messages.push(Message {
                 text: text.to_owned(),
                 is_user: true,
@@ -37,15 +35,15 @@ pub fn App() -> impl IntoView {
                 text: "typing...".to_owned(),
                 is_user: false,
             };
-            set_conversation.update(|&mut conversation| {
+            set_conversation.update(|conversation| {
                 conversation.messages.push(typing_message);
             });
         }
     });
 
-    create_action(move |_| {
-        if Some(Ok(response)) = send.input().get() {
-            set_conversation.update(move |&mut c| {
+    create_effect(move |_| {
+        if let Some(response) = send.input().get() {
+            set_conversation.update(move |c| {
                 c.messages.last_mut().unwrap().text = response;
             })
         }
