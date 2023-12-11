@@ -93,11 +93,11 @@ cfg_if! {
             dotenv().ok();
             let model_path = env::var("MODEL_PATH").expect("LLM_MODEL_PATH must be set");
             llm::load::<Llama>(
-                PathBuf::from(model_path),
+                &PathBuf::from(model_path.clone()),
                 llm::TokenizerSource::Embedded,
                 Default::default(),
-                llm::load_progress_callback_srdout,
-            ).unwrap_or_else(|e| panic!("issue loading model from {model_path} \n errpr: {e}"))
+                llm::load_progress_callback_stdout,
+            ).unwrap_or_else(|e| panic!("issue loading model from {model} \n errpr: {e}", model = model_path.clone()))
         }
     }
 }
